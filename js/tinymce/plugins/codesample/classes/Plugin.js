@@ -73,10 +73,18 @@ define("tinymce/codesampleplugin/Plugin", [
 						});
 
 						elm.contentEditable = false;
-						var textContentEncodeValue = editor.dom.encode(elm.textContent);
-						elm.innerHTML = (textContentEncodeValue === elm.innerHTML) ? 
-								textContentEncodeValue :
-								editor.dom.encode(elm.innerHTML);
+						
+						var textContentEncodeValue = editor.dom.encode(elm.textContent),
+						    innerHTMLEncodedValue = editor.dom.encode(elm.firstChild.innerHTML),
+						    shouldUseTextValue = ((!elm.firstChild) 
+						    			|| (!innerHTMLEncodedValue) 
+						    			|| (textContentEncodeValue === elm.innerHTML) 
+						    			|| (elm.innerHTML === elm.textContent));
+						    			
+						elm.innerHTML =  shouldUseTextValue ? 
+								 textContentEncodeValue : 
+								 editor.dom.encode(elm.innerHTML);
+								 
 						Prism.highlightElement(elm);
 						elm.className = $.trim(elm.className);
 					});
